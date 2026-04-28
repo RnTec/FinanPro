@@ -106,9 +106,6 @@ export default function LoginPage() {
             Não tem conta? <Link href="/register">Criar conta grátis</Link>
           </p>
 
-          <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            Demo: demo@finanpro.com / demo1234
-          </p>
           <p style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '8px' }}>
             Desenvolvido por <strong>RnTecnologia</strong>
           </p>
