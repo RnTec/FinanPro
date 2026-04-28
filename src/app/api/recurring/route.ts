@@ -16,6 +16,7 @@ export async function GET() {
 
   const bills = await prisma.recurringBill.findMany({
     where: { userId },
+    include: { category: true },
     orderBy: { nextDueDate: 'asc' },
   });
   return NextResponse.json(bills);

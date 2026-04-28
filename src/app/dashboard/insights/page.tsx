@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, TrendingDown, TrendingUp, Lightbulb, ShieldCheck, Loader2, RefreshCw } from 'lucide-react';
+import { Sparkles, TrendingDown, TrendingUp, Lightbulb, ShieldCheck, Loader2, RefreshCw, Printer } from 'lucide-react';
 
 interface InsightData {
   generalStatus: string;
@@ -30,10 +30,17 @@ export default function InsightsPage() {
           <h1>Insights com IA</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Análise preditiva e sugestões personalizadas</p>
         </div>
-        <button className="btn btn-primary" onClick={generateInsights} disabled={loading}>
-          {loading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-          {data ? 'Recalcular Insights' : 'Gerar Insights'}
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {data && (
+            <button className="btn btn-secondary" onClick={() => window.print()}>
+              <Printer size={18} /> Imprimir Relatório
+            </button>
+          )}
+          <button className="btn btn-primary" onClick={generateInsights} disabled={loading}>
+            {loading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
+            {data ? 'Recalcular Insights' : 'Gerar Insights'}
+          </button>
+        </div>
       </div>
 
       <div className="page-content animate-fade">
@@ -180,6 +187,18 @@ export default function InsightsPage() {
         .bullet-yellow { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); margin-top: 6px; flex-shrink: 0; }
         .progress-bar-bg { background: var(--bg-input); border-radius: 6px; overflow: hidden; }
         .progress-bar-fill { height: 100%; transition: width 1s ease-out; }
+
+        @media print {
+          .sidebar, .page-header button, .btn { display: none !important; }
+          .main-content { padding: 0 !important; margin: 0 !important; }
+          .card { border: 1px solid #eee !important; box-shadow: none !important; break-inside: avoid; }
+          body { background: white !important; color: black !important; }
+          h1, h2, h3 { color: black !important; }
+          .score-badge { color: black !important; border: 2px solid black; padding: 10px; border-radius: 8px; }
+          .progress-bar-bg { border: 1px solid #ccc; }
+          .progress-bar-fill { background: #333 !important; }
+          .bullet-blue, .bullet-yellow { border: 1px solid black; }
+        }
       `}</style>
     </>
   );

@@ -78,16 +78,32 @@ export default function DashboardPage() {
 
   const lineData = {
     labels: data.monthlyData.map(m => getMonthNameShort(m.month)),
-    datasets: [{
-      label: 'Saldo',
-      data: data.monthlyData.map(m => m.income - m.expense),
-      borderColor: '#6366f1',
-      backgroundColor: 'rgba(99,102,241,0.1)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: 4,
-      pointBackgroundColor: '#6366f1',
-    }],
+    datasets: [
+      {
+        label: 'Saldo Mensal',
+        data: data.monthlyData.map(m => m.income - m.expense),
+        borderColor: '#6366f1',
+        backgroundColor: 'rgba(99,102,241,0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: '#6366f1',
+      },
+      {
+        label: 'Saldo Acumulado',
+        data: data.monthlyData.reduce((acc: number[], curr, i) => {
+          const monthlyBalance = curr.income - curr.expense;
+          const prevAccumulated = i > 0 ? acc[i-1] : (data.summary.balance - data.monthlyData.slice(i).reduce((s, m) => s + (m.income - m.expense), 0));
+          acc.push(prevAccumulated + monthlyBalance);
+          return acc;
+        }, []),
+        borderColor: 'var(--green)',
+        borderDash: [5, 5],
+        tension: 0.4,
+        pointRadius: 0,
+        fill: false,
+      }
+    ],
   };
 
   return (

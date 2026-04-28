@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { User, Shield, Bell, Trash2, LogOut, Save, Loader2, Globe } from 'lucide-react';
+import { User, Shield, Bell, Trash2, LogOut, Save, Loader2, Globe, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
 export default function SettingsPage() {
@@ -54,6 +54,42 @@ export default function SettingsPage() {
       }
     } catch (err) { console.error(err); }
     finally { setLoading(false); setShowResetModal(false); }
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!confirm('ATENÇÃO: Importar dados irá apagar todos os seus registros atuais para substituí-los pelo backup. Deseja continuar?')) {
+      e.target.value = '';
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const text = await file.text();
+      const json = JSON.parse(text);
+      
+      const res = await fetch('/api/user/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: json.data })
+      });
+
+      if (res.ok) {
+        alert('Dados importados com sucesso! A página será reiniciada.');
+        window.location.reload();
+      } else {
+        const err = await res.json();
+        alert(`Erro: ${err.error}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Arquivo JSON inválido.');
+    } finally {
+      setLoading(false);
+      e.target.value = '';
+    }
   };
 
   return (
@@ -118,6 +154,43 @@ export default function SettingsPage() {
               <button className="btn btn-secondary" onClick={() => signOut()}>
                 <LogOut size={18} /> Sair da Conta
               </button>
+            </div>
+          </div>
+
+          {/* Data Portability Section */}
+          <div className="card" style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--green-bg)', color: 'var(--green)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Globe size={20} />
+              </div>
+              <h3 style={{ margin: 0 }}>Portabilidade de Dados</h3>
+            </div>
+
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
+              Exporte seus dados para backup ou importe um arquivo gerado anteriormente. Seus dados pertencem a você.
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <button 
+                className="btn btn-secondary" 
+                onClick={async () => {
+                  const res = await fetch('/api/user/export');
+                  const data = await res.json();
+                  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `finanpro-backup-${new Date().toISOString().split('T')[0]}.json`;
+                  a.click();
+                }}
+              >
+                <Save size={18} /> Exportar Backup (JSON)
+              </button>
+              
+              <label className="btn btn-ghost" style={{ cursor: 'pointer' }}>
+                <Plus size={18} /> Importar Backup
+                <input type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} disabled={loading} />
+              </label>
             </div>
           </div>
         </div>
