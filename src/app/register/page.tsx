@@ -92,6 +92,9 @@ export default function RegisterPage() {
           <p className="auth-divider">
             Já tem conta? <Link href="/login">Fazer login</Link>
           </p>
+          <p style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '8px' }}>
+            Desenvolvido por <strong>RnTecnologia</strong>
+          </p>
         </form>
       </div>
     </div>
