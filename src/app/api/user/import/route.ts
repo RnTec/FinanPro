@@ -21,8 +21,8 @@ export async function POST(request: Request) {
       // 1. Limpar dados atuais
       await tx.transaction.deleteMany({ where: { userId } });
       await tx.recurringBill.deleteMany({ where: { userId } });
-      await tx.card.deleteMany({ where: { userId } });
-      await tx.goal.deleteMany({ where: { userId } });
+      await tx.creditCard.deleteMany({ where: { userId } });
+      await tx.financialGoal.deleteMany({ where: { userId } });
       await tx.category.deleteMany({ where: { userId } });
 
       // 2. Importar Categorias primeiro (dependência)
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       if (data.cards) {
         for (const card of data.cards) {
           const { id, userId: _, ...cardData } = card;
-          await tx.card.create({ data: { ...cardData, userId } });
+          await tx.creditCard.create({ data: { ...cardData, userId } });
         }
       }
 
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       if (data.goals) {
         for (const goal of data.goals) {
           const { id, userId: _, ...goalData } = goal;
-          await tx.goal.create({ data: { ...goalData, userId, deadline: new Date(goalData.deadline) } });
+          await tx.financialGoal.create({ data: { ...goalData, userId, deadline: goalData.deadline ? new Date(goalData.deadline) : null } });
         }
       }
     });

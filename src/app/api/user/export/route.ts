@@ -12,7 +12,7 @@ export async function GET() {
     include: {
       transactions: true,
       categories: true,
-      cards: true,
+      creditCards: true,
       recurringBills: true,
       goals: true,
     },
@@ -21,7 +21,7 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
 
   // Remover informações sensíveis
-  const { password, ...safeData } = user;
+  const { passwordHash, ...safeData } = user;
 
   return NextResponse.json({
     version: '1.0',

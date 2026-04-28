@@ -27,8 +27,8 @@ export async function GET() {
   });
 
   // Buscar metas próximas (90% ou mais concluídas)
-  const goals = await prisma.goal.findMany({ where: { userId: user.id } });
-  const urgentGoals = goals.filter(g => (g.currentAmount / g.targetAmount) >= 0.9 && (g.currentAmount < g.targetAmount));
+  const goals = await prisma.financialGoal.findMany({ where: { userId: user.id } });
+  const urgentGoals = goals.filter((g: any) => (g.currentAmount / g.targetAmount) >= 0.9 && (g.currentAmount < g.targetAmount));
 
   const alerts = [
     ...urgentBills.map(b => ({
@@ -38,7 +38,7 @@ export async function GET() {
       message: `${b.name} vence em ${new Date(b.nextDueDate).toLocaleDateString('pt-BR')}`,
       severity: new Date(b.nextDueDate) <= today ? 'HIGH' : 'MEDIUM'
     })),
-    ...urgentGoals.map(g => ({
+    ...urgentGoals.map((g: any) => ({
       id: `goal-${g.id}`,
       type: 'GOAL',
       title: 'Meta Quase Lá!',

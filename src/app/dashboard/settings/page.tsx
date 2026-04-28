@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { User, Shield, Bell, Trash2, LogOut, Save, Loader2, Globe, X } from 'lucide-react';
+import { User, Shield, Bell, Trash2, LogOut, Save, Loader2, Globe, X, Plus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
 export default function SettingsPage() {
