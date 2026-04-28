@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  currency      String    @default("BRL")
+  theme         String    @default("dark")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts       Account[]
+  categories     Category[]
+  transactions   Transaction[]
+  recurringBills RecurringBill[]
+  creditCards    CreditCard[]
+  goals          FinancialGoal[]
+}
+
+model Account {
+  id       String @id @default(cuid())
+  userId   String
+  name     String
+  type     String @default("CHECKING")
+  balance  Float  @default(0)
+  color    String @default("#6366f1")
+  icon     String @default("wallet")
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model Category {
+  id        String  @id @default(cuid())
+  userId    String
+  name      String
+  icon      String  @default("tag")
+  color     String  @default("#6366f1")
+  type      String
+  isDefault Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subCategories SubCategory[]
+  transactions  Transaction[]
+  recurringBills RecurringBill[]
+
+  @@index([userId])
+  @@index([type])
+}
+
+model SubCategory {
+  id         String @id @default(cuid())
+  categoryId String
+  name       String
+  createdAt  DateTime @default(now())
+
+  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([categoryId])
+}
+
+model Transaction {
+  id              String   @id @default(cuid())
+  userId          String
+  categoryId      String?
+  subCategoryId   String?
+  creditCardId    String?
+  accountId       String?
+  recurringBillId String?
+  amount          Float
+  type            String
+  costType        String?
+  description     String
+  vendor          String?
+  date            DateTime
+  isPaid          Boolean  @default(true)
+  installmentNumber Int?
+  installmentTotal  Int?
+  attachmentUrl   String?
+  ocrRawText      String?
+  aiMetadata      String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  subCategory   SubCategory?   @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
+  creditCard    CreditCard?    @relation(fields: [creditCardId], references: [id], onDelete: SetNull)
+  account       Account?       @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  recurringBill RecurringBill? @relation(fields: [recurringBillId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([date])
+  @@index([type])
+}
+
+model RecurringBill {
+  id             String   @id @default(cuid())
+  userId         String
+  categoryId     String?
+  name           String
+  expectedAmount Float
+  dueDay         Int
+  frequency      String   @default("MONTHLY")
+  isActive       Boolean  @default(true)
+  nextDueDate    DateTime
+  alertDaysBefore Int     @default(3)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category     Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model CreditCard {
+  id            String @id @default(cuid())
+  userId        String
+  name          String
+  lastFourDigits String?
+  creditLimit   Float   @default(0)
+  closingDay    Int     @default(1)
+  dueDay        Int     @default(10)
+  brand         String?
+  color         String  @default("#6366f1")
+  isActive      Boolean @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model FinancialGoal {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  deadline      DateTime?
+  icon          String   @default("target")
+  color         String   @default("#10b981")
+  isCompleted   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

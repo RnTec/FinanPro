@@ -1,24 +1,46 @@
 {
-  "name": "finanpro-temp",
+  "name": "finanpro",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^3.0.3",
+    "chart.js": "^4.5.1",
+    "dotenv": "^17.4.2",
+    "lucide-react": "^1.11.0",
     "next": "16.2.4",
+    "next-auth": "^4.24.14",
+    "openai": "^6.34.0",
+    "prisma": "^5.22.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "19.2.4",
+    "tesseract.js": "^7.0.0",
+    "uuid": "^14.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
