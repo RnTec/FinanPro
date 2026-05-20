@@ -500,51 +500,68 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="credit-cards-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Cartão 1: Gold Premium (Estilo Olga Bals na foto) */}
-            <div className="credit-card-item card-gradient-gold">
-              <div className="card-header-brand">
-                <span className="card-tier" style={{ fontWeight: 800 }}>Premium</span>
-                <div className="card-chip"></div>
+          <div className="credit-cards-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px', justifyContent: cards.length === 0 ? 'center' : 'flex-start' }}>
+            {cards.length === 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '24px', textAlign: 'center', background: 'rgba(255, 255, 255, 0.01)', border: '1px dashed rgba(255, 255, 255, 0.08)', borderRadius: '12px', minHeight: '200px' }}>
+                <CreditCard size={28} style={{ color: 'var(--accent)', opacity: 0.5, marginBottom: '10px' }} />
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '16px', maxWidth: '200px', lineHeight: '1.4' }}>Você ainda não cadastrou nenhum cartão de crédito.</p>
+                <Link href="/dashboard/cards" className="btn btn-secondary btn-sm" style={{ padding: '6px 16px', borderRadius: '100px', display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', fontSize: '0.75rem', fontWeight: 600 }}>
+                  <Plus size={12} /> Cadastrar Cartão
+                </Link>
               </div>
-              <div className="card-number">•••• •••• •••• 1777</div>
-              <div className="card-footer-info">
-                <div className="card-holder">
-                  <span className="card-holder-label">Titular do Cartão</span>
-                  <span className="card-holder-name">{userName}</span>
-                </div>
-                <div className="card-expiry">
-                  <span className="card-holder-label" style={{ display: 'block' }}>Vence em</span>
-                  <span className="card-expiry-val">07/28</span>
-                </div>
-              </div>
-            </div>
+            ) : (
+              cards.slice(0, 2).map((card) => {
+                const isGold = card.color?.toLowerCase() === '#f6c445' || card.color?.toLowerCase() === '#d39e09' || card.color?.toLowerCase() === 'gold';
+                const cardStyle = {
+                  background: card.color 
+                    ? `linear-gradient(135deg, ${card.color} 0%, rgba(9, 10, 15, 0.95) 100%)`
+                    : 'linear-gradient(135deg, #3d4ef5 0%, #090a0f 100%)',
+                  color: 'white',
+                };
+                
+                const isMastercard = card.brand?.toLowerCase() === 'mastercard';
+                const isVisa = card.brand?.toLowerCase() === 'visa';
 
-            {/* Cartão 2: Indigo MasterCard */}
-            <div className="credit-card-item card-gradient-blue">
-              <div className="card-header-brand">
-                <span className="card-tier" style={{ fontWeight: 800, letterSpacing: '0.05em' }}>Mastercard.</span>
-                <div className="card-chip" style={{ background: 'linear-gradient(135deg, #e0a96d 0%, #ad7a42 100%)' }}></div>
-              </div>
-              <div className="card-number" style={{ color: 'white' }}>•••• •••• •••• 5644</div>
-              <div className="card-footer-info">
-                <div className="card-holder">
-                  <span className="card-holder-label" style={{ opacity: 0.75 }}>Titular do Cartão</span>
-                  <span className="card-holder-name" style={{ color: 'white' }}>{userName}</span>
-                </div>
-                <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
-                  <div className="card-expiry" style={{ textAlign: 'right' }}>
-                    <span className="card-holder-label" style={{ display: 'block', opacity: 0.75 }}>Vence em</span>
-                    <span className="card-expiry-val" style={{ color: 'white' }}>12/29</span>
+                return (
+                  <div 
+                    key={card.id} 
+                    className={`credit-card-item ${isGold ? 'card-gradient-gold' : ''}`}
+                    style={isGold ? undefined : cardStyle}
+                  >
+                    <div className="card-header-brand">
+                      <span className="card-tier" style={{ fontWeight: 800, letterSpacing: '0.1em' }}>
+                        {card.name}
+                      </span>
+                      <div className="card-chip" style={isGold ? { background: 'linear-gradient(135deg, #ffffff 0%, #cfd9df 100%)', border: '1px solid rgba(0,0,0,0.25)' } : undefined}></div>
+                    </div>
+                    <div className="card-number">
+                      •••• •••• •••• {card.lastFourDigits || '0000'}
+                    </div>
+                    <div className="card-footer-info">
+                      <div className="card-holder">
+                        <span className="card-holder-label" style={{ opacity: isGold ? 1 : 0.75 }}>Titular do Cartão</span>
+                        <span className="card-holder-name" style={{ color: isGold ? '#090a0f' : 'white' }}>{userName}</span>
+                      </div>
+                      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
+                        <div className="card-expiry" style={{ textAlign: 'right' }}>
+                          <span className="card-holder-label" style={{ display: 'block', opacity: isGold ? 1 : 0.75 }}>Dia Venc.</span>
+                          <span className="card-expiry-val" style={{ color: isGold ? '#090a0f' : 'white' }}>{card.dueDay}</span>
+                        </div>
+                        {isMastercard && (
+                          <div style={{ display: 'flex', width: '36px', height: '24px', position: 'relative' }}>
+                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#eb001b', opacity: 0.9, position: 'absolute', left: 0 }}></div>
+                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#f79e1b', opacity: 0.9, position: 'absolute', right: 0 }}></div>
+                          </div>
+                        )}
+                        {isVisa && (
+                          <span style={{ fontStyle: 'italic', fontWeight: 'bold', fontSize: '1rem', color: isGold ? '#090a0f' : 'white' }}>VISA</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  {/* MasterCard Symbol Emblem (overlapping red and orange circles) */}
-                  <div style={{ display: 'flex', width: '36px', height: '24px', position: 'relative' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#eb001b', opacity: 0.9, position: 'absolute', left: 0 }}></div>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#f79e1b', opacity: 0.9, position: 'absolute', right: 0 }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
