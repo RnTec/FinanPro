@@ -77,9 +77,9 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             </div>
             <ChevronDown size={16} style={{ color: 'var(--text-secondary)', cursor: 'pointer' }} />
           </div>
-          <button className="btn btn-secondary btn-sm" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', justifyContent: 'center', marginTop: '12px', background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }}>
+          <Link href="/dashboard/recurring?new=true" className="btn btn-secondary btn-sm" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', justifyContent: 'center', marginTop: '12px', background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)', color: 'white', textDecoration: 'none' }}>
             <Plus size={14} /> Adicionar conta
-          </button>
+          </Link>
         </div>
 
         {/* Notifications Dropdown */}

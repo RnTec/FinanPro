@@ -36,7 +36,18 @@ export default function RecurringPage() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    fetchData();
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('new') === 'true') {
+        resetForm();
+        setShowModal(true);
+        // Limpa o parâmetro da URL para evitar reabertura indesejada no refresh
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, [fetchData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
