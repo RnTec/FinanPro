@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { SessionProvider } from 'next-auth/react';
 import {
   LayoutDashboard, ArrowLeftRight, Tag, RotateCcw,
-  CreditCard, Target, Settings, LogOut, TrendingUp, Menu, Bell, X as CloseIcon, Info, AlertTriangle
+  CreditCard, Target, Settings, LogOut, TrendingUp, Menu, Bell, X as CloseIcon, Info, AlertTriangle, ChevronDown, Plus
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import WelcomeTour from '@/components/WelcomeTour';
@@ -48,21 +48,38 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     <div className="app-layout">
       {/* Sidebar Desktop */}
       <aside className="sidebar">
-        <div className="sidebar-logo">
+        <div className="sidebar-logo" style={{ borderBottom: 'none', paddingBottom: '12px', marginBottom: '8px' }}>
           <h2>💰 FinanPro</h2>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-            <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>Gestão Inteligente</span>
+            <span style={{ fontSize: '0.72rem', opacity: 0.6 }}>Gestão Inteligente</span>
             <div style={{ position: 'relative' }}>
               <button 
                 className={`btn-icon-sm ${notifications.length > 0 ? 'pulse-orange' : ''}`} 
                 onClick={() => setShowNotifications(!showNotifications)}
-                style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '6px', border: 'none', color: 'white', cursor: 'pointer' }}
+                style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '6px', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <Bell size={18} />
+                <Bell size={16} />
                 {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
               </button>
             </div>
           </div>
+        </div>
+
+        {/* User Card - Inspired by OnePay */}
+        <div style={{ padding: '0 8px 16px', borderBottom: '1px solid var(--border)', marginBottom: '16px' }}>
+          <div className="user-card" style={{ background: 'transparent', border: 'none', padding: '8px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="user-avatar" style={{ width: '38px', height: '38px', fontSize: '0.85rem' }}>{initials}</div>
+              <div className="user-info">
+                <div className="user-name" style={{ fontSize: '0.88rem', fontWeight: '700' }}>{userName}</div>
+                <div className="user-email" style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', opacity: 0.8 }}>ID: #{userEmail.split('@')[0] || 'demo'}</div>
+              </div>
+            </div>
+            <ChevronDown size={16} style={{ color: 'var(--text-secondary)', cursor: 'pointer' }} />
+          </div>
+          <button className="btn btn-secondary btn-sm" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', justifyContent: 'center', marginTop: '12px', background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }}>
+            <Plus size={14} /> Adicionar conta
+          </button>
         </div>
 
         {/* Notifications Dropdown */}
@@ -89,29 +106,24 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         )}
+        
         <nav className="sidebar-nav">
-          <div className="nav-section">Menu</div>
+          <div className="nav-section" style={{ paddingTop: '0' }}>Menu</div>
           {navItems.map((item) => (
             <Link key={item.href} href={item.href} className={`nav-item ${pathname === item.href ? 'active' : ''}`}>
-              <item.icon size={20} />
+              <item.icon size={18} />
               {item.label}
             </Link>
           ))}
           <div className="nav-section">Configurações</div>
           <Link href="/dashboard/settings" className={`nav-item ${pathname === '/dashboard/settings' ? 'active' : ''}`}>
-            <Settings size={20} /> Configurações
+            <Settings size={18} /> Configurações
           </Link>
         </nav>
-        <div className="sidebar-footer">
-          <div className="user-card">
-            <div className="user-avatar">{initials}</div>
-            <div className="user-info">
-              <div className="user-name">{userName}</div>
-              <div className="user-email">{userEmail}</div>
-            </div>
-          </div>
-          <button onClick={() => signOut({ callbackUrl: '/login' })} className="nav-item" style={{ marginTop: '8px', color: 'var(--red)' }}>
-            <LogOut size={20} /> Sair
+        
+        <div className="sidebar-footer" style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+          <button onClick={() => signOut({ callbackUrl: '/login' })} className="nav-item" style={{ color: 'var(--red)', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px' }}>
+            <LogOut size={18} /> Sair do Sistema
           </button>
         </div>
       </aside>
